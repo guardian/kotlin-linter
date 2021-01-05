@@ -5,8 +5,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.guardian.ktlinter.usecases.CreateAPullRequestReview
-import com.guardian.ktlinter.usecases.CreateGitHubPatchesFromPatchString
+import com.guardian.ktlinter.usecases.GetPatchMetaData
 import com.guardian.ktlinter.usecases.LineWithAddition
+import com.guardian.ktlinter.usecases.ParseGitPatchIntoLines
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -47,7 +48,7 @@ fun main(args: Array<String>) {
     val service = retrofit.create(GitHubService::class.java)
 
     val createAPullRequestReview = CreateAPullRequestReview(service)
-    val createGitHubPatchesFromPatchString = CreateGitHubPatchesFromPatchString()
+    val createGitHubPatchesFromPatchString = ParseGitPatchIntoLines(GetPatchMetaData())
 
 
     val pullRequestCall = service.getPullRequestDetails(pullRequestId)
@@ -66,54 +67,60 @@ fun main(args: Array<String>) {
         val report = readKtLintReport(gson, reportLocation)
 
 
-        val lineChangesByFile = kotlinFiles.map { file ->
-            val patches = file.patch.split("@@ -").filterNot { it.isEmpty() }
-            patches.map { patch ->
-                createGitHubPatchesFromPatchString(file.filename, file.sha, patch)
-            }.flatten()
-        }.flatten().groupBy { it.filename }
-
-        println(lineChangesByFile)
-
-
-        val errorsToSendToGithub = report.map { fileReport ->
-            val key = lineChangesByFile.keys.firstOrNull { fileReport.file.contains(it) }
-            if (key != null) {
-                val relevantLines = lineChangesByFile[key]!!
-                relevantLines.flatMap { patch ->
-                    fileReport.errors.filter { ktLintError -> ktLintError.line == patch.lineInFile }
-                        .map {
-                            GithubComment(
-                                patch, it
-                            )
-                        }
-                }
-            } else {
-                emptyList()
-            }
-        }.flatten()
-
-
-
-        println("There are ${errorsToSendToGithub.size} comments to post to Github.")
-
-        val comments = errorsToSendToGithub.map { githubComment ->
-            val comment =
-                "This change is for line ${githubComment.ktLintError.line} of ${githubComment.lineWithAddition.filename}\n${githubComment.ktLintError.message}"
-            ReviewComment(
-                comment,
-                githubComment.lineWithAddition.filename,
-                githubComment.lineWithAddition.lineInFile
-            )
+        kotlinFiles.forEach {
+            println("PATCHES")
+            println(it.patch)
         }
 
 
-        createAPullRequestReview.invoke(
-            pullRequestId,
-            pullRequest!!.head.sha,
-            "COMMENT",
-            comments
-        )
+//        val lineChangesByFile = kotlinFiles.map { file ->
+//            val patches = file.patch.split("@@ -").filterNot { it.isEmpty() }
+//            patches.map { patch ->
+//                createGitHubPatchesFromPatchString(file.filename, file.sha, patch)
+//            }
+//        }.flatten().groupBy { it.fileName }
+
+//        println(lineChangesByFile)
+
+
+//        val errorsToSendToGithub = report.map { fileReport ->
+//            val key = lineChangesByFile.keys.firstOrNull { fileReport.file.contains(it) }
+//            if (key != null) {
+//                val relevantLines = lineChangesByFile[key]!!
+//                relevantLines.lin.flatMap { patch ->
+//                    fileReport.errors.filter { ktLintError -> ktLintError.line == patch.lineInFile }
+//                        .map {
+//                            GithubComment(
+//                                patch, it
+//                            )
+//                        }
+//                }
+//            } else {
+//                emptyList()
+//            }
+//        }.flatten()
+
+//
+//
+//        println("There are ${errorsToSendToGithub.size} comments to post to Github.")
+//
+//        val comments = errorsToSendToGithub.map { githubComment ->
+//            val comment =
+//                "This change is for line ${githubComment.ktLintError.line} of ${githubComment.lineWithAddition.filename}\n${githubComment.ktLintError.message}"
+//            ReviewComment(
+//                comment,
+//                githubComment.lineWithAddition.filename,
+//                githubComment.lineWithAddition.lineInFile
+//            )
+//        }
+//
+//
+//        createAPullRequestReview.invoke(
+//            pullRequestId,
+//            pullRequest!!.head.sha,
+//            "COMMENT",
+//            comments
+//        )
 
     } else {
         println("There has been an error retrieving pull request details.")
