@@ -1,3 +1,6 @@
-./tmp
-./report
+tmp/
+report/
 LinterCredentials.kt
+out/
+.idea/
+.gradle/
