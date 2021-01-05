@@ -1,5 +1,7 @@
 package com.guardian.ktlinter.github
 
+import com.guardian.ktlinter.Value
+import com.guardian.ktlinter.callExecutor
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
@@ -29,17 +31,12 @@ class DownloadRelevantPullRequestFiles(
                 println(exception)
             }
             val localFile = File(fileName)
-            if (!localFile.exists()) {
-                val contentCall = gitHubService.getFileContents(file.filename, ref)
-                val contentsRequest = contentCall.execute()
-                if (contentsRequest.isSuccessful) {
-                    localFile.writeText(contentsRequest.body()!!)
-                } else {
-                    println("Response code: ${contentsRequest.code()}")
-                }
-
-            } else {
-                println("$fileName already exists.")
+            if (localFile.exists()) {
+                localFile.delete()
+            }
+            when (val value = callExecutor(gitHubService.getFileContents(file.filename, ref))) {
+                is Value.Data<*> -> localFile.writeText(value.data as String)
+                is Value.Error -> println(value.message)
             }
         }
     }

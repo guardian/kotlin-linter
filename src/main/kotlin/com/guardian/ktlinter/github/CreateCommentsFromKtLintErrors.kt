@@ -2,12 +2,12 @@ package com.guardian.ktlinter.github
 
 import com.guardian.ktlinter.git.Patch
 import com.guardian.ktlinter.ktlint.KtLintError
-import com.guardian.ktlinter.ktlint.KtLintFileReport
+import com.guardian.ktlinter.ktlint.KtLintReport
 
 class CreateCommentsFromKtLintErrors {
 
-    operator fun invoke(ktLintFileReports: List<KtLintFileReport>, patches: List<Patch>): List<SuggestedChange> {
-        return ktLintFileReports.map { fileReport ->
+    operator fun invoke(ktLintFileReport: KtLintReport, patches: List<Patch>): List<SuggestedChange> {
+        return ktLintFileReport.fileReports.map { fileReport ->
             val patchesForFile = patches.filter { fileReport.file.contains(it.fileName) }
             patchesForFile
                 .filterNot { patch -> patch.additions.isEmpty() }
