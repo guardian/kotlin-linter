@@ -1,4 +1,4 @@
-package com.guardian.ktlinter
+package com.guardian.ktlinter.github
 
 data class PullRequestFile(
     val sha: String,

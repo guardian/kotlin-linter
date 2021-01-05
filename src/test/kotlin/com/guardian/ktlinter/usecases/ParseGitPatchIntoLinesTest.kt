@@ -1,5 +1,8 @@
 package com.guardian.ktlinter.usecases
 
+import com.guardian.ktlinter.git.GetPatchMetaData
+import com.guardian.ktlinter.git.ParseGitPatchIntoLines
+import com.guardian.ktlinter.git.PatchLine
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
 import org.junit.Test
@@ -14,7 +17,8 @@ class ParseGitPatchIntoLinesTest {
                 "            +\n" +
                 "            +data class TestData(val string: String) {\n" +
                 "            +}"
-        val parseGitPatchIntoLines = ParseGitPatchIntoLines(GetPatchMetaData())
+        val parseGitPatchIntoLines =
+            ParseGitPatchIntoLines(GetPatchMetaData())
         val output = parseGitPatchIntoLines.invoke("filename", "sha", patch)
         assertEquals(4, output.lines.size)
         assertEquals(4, output.lines.filterIsInstance(PatchLine.Addition::class.java).size)
@@ -52,7 +56,8 @@ class ParseGitPatchIntoLinesTest {
                 "                         hasBeenDragged = false\n" +
                 "                     }"
 
-        val parseGitPatchIntoLines = ParseGitPatchIntoLines(GetPatchMetaData())
+        val parseGitPatchIntoLines =
+            ParseGitPatchIntoLines(GetPatchMetaData())
         val output = parseGitPatchIntoLines.invoke("filename", "sha", patch)
         assertEquals(26, output.lines.size)
         assertEquals(4, output.lines.filterIsInstance(PatchLine.Addition::class.java).size)

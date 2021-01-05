@@ -1,4 +1,4 @@
-package com.guardian.ktlinter.usecases
+package com.guardian.ktlinter.git
 
 class GetPatchMetaData {
     operator fun invoke(patch: String): PatchMetaData {
@@ -18,7 +18,3 @@ class GetPatchMetaData {
     }
 }
 
-data class PatchMetaData(
-    val patchStartLine: Int,
-    val patchLength: Int
-)

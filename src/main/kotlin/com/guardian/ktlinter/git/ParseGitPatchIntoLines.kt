@@ -1,4 +1,4 @@
-package com.guardian.ktlinter.usecases
+package com.guardian.ktlinter.git
 
 class ParseGitPatchIntoLines(
     private val getPatchMetaData: GetPatchMetaData
@@ -49,24 +49,14 @@ class ParseGitPatchIntoLines(
 
 }
 
-/**
- * @param filename what file is this change in?
- * @param position what position in a patch is this change?
- * @param lineInFile what line of the parent file is this?
- * @param commitId the commit id
- */
-data class LineWithAddition(
-    val filename: String,
-    val position: Int,
-    val lineInFile: Int,
-    val commitId: String
-)
-
 data class Patch(
     val fileName: String,
     val commitId: String,
     val lines: List<PatchLine>
-)
+) {
+    val additions: List<PatchLine.Addition>
+        get() = lines.filterIsInstance(PatchLine.Addition::class.java)
+}
 
 sealed class PatchLine {
     object NoChange : PatchLine()

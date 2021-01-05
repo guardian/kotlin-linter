@@ -1,4 +1,4 @@
-package com.guardian.ktlinter
+package com.guardian.ktlinter.ktlint
 
 data class KtLintFileReport(
     val file: String,

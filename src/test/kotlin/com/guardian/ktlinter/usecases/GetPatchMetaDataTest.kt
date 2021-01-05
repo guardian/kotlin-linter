@@ -1,5 +1,6 @@
 package com.guardian.ktlinter.usecases
 
+import com.guardian.ktlinter.git.GetPatchMetaData
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 
