@@ -1,11 +1,11 @@
 package com.guardian.ktlinter.github.usecases
 
-import com.guardian.ktlinter.models.Value
 import com.guardian.ktlinter.executeCall
 import com.guardian.ktlinter.github.network.GitHubService
 import com.guardian.ktlinter.models.DownloadedFile
 import com.guardian.ktlinter.models.FetchedFile
 import com.guardian.ktlinter.models.FilenameAndDirectory
+import com.guardian.ktlinter.models.Value
 import java.io.File
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
@@ -23,13 +23,13 @@ class DownloadRelevantPullRequestFiles(
             when (val value = executeCall(gitHubService.getFileContents(fetchedFile.filename, ref))) {
                 is Value.Data<*> -> {
                     val filenameAndDirectory = splitDirectoriesAndFileName(filesStore, fetchedFile)
-                    val saveDirectory = "$filesStore${filenameAndDirectory.directory}/"
+                    val saveDirectory = "${filenameAndDirectory.directory}/"
                     try {
                         Files.createDirectories(Paths.get(saveDirectory))
                     } catch (exception: FileAlreadyExistsException) {
                         // Empty
                     }
-                    val file = File(filenameAndDirectory.fileName).apply {
+                    val file = File(filenameAndDirectory.fullPath).apply {
                         writeText(value.data as String)
                     }
                     DownloadedFile(
@@ -49,7 +49,7 @@ class DownloadRelevantPullRequestFiles(
     ): FilenameAndDirectory {
         val splitDirectories = fetchedFile.filename.split("/").toMutableList()
         val fileName = splitDirectories.removeAt(splitDirectories.lastIndex)
-        val directory = saveDirectory + splitDirectories.joinToString("/")
+        val directory = saveDirectory + splitDirectories.joinToString("/") + "/"
         return FilenameAndDirectory(
             directory = directory,
             fileName = fileName,
