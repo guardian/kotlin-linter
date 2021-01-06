@@ -1,6 +1,6 @@
-package com.guardian.ktlinter.github
+package com.guardian.ktlinter.github.models
 
-data class PullRequestFile(
+data class GithubPullRequestFile(
     val sha: String,
     val filename: String,
     val status: String,

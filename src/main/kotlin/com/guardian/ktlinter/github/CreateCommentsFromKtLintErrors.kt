@@ -1,6 +1,6 @@
 package com.guardian.ktlinter.github
 
-import com.guardian.ktlinter.git.Patch
+import com.guardian.ktlinter.Patch
 import com.guardian.ktlinter.ktlint.KtLintError
 import com.guardian.ktlinter.ktlint.KtLintReport
 

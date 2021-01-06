@@ -1,5 +1,8 @@
 package com.guardian.ktlinter.git
 
+import com.guardian.ktlinter.Patch
+import com.guardian.ktlinter.PatchLine
+
 class ParseGitPatchIntoLines(
     private val getPatchMetaData: GetPatchMetaData
 ) {
@@ -45,26 +48,4 @@ class ParseGitPatchIntoLines(
             filename, sha, stringLinesMappedToPatchLines
         )
     }
-
-
-}
-
-data class Patch(
-    val fileName: String,
-    val commitId: String,
-    val lines: List<PatchLine>
-) {
-    val additions: List<PatchLine.Addition>
-        get() = lines.filterIsInstance(PatchLine.Addition::class.java)
-}
-
-sealed class PatchLine {
-    object NoChange : PatchLine()
-    object Removal : PatchLine()
-    object Metadata : PatchLine()
-    data class Addition(
-        val lineInFile: Int,
-        val lineInPatch: Int,
-        val change: String
-    ) : PatchLine()
 }

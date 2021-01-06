@@ -10,50 +10,36 @@ import com.guardian.ktlinter.ktlint.RunKtLintOnDirectory
 
 class PullRequestReviewer(
     private val config: Config,
-    private val getPullRequestDetails: GetPullRequestDetails,
-    private val getPullRequestFiles: GetPullRequestFiles,
-    private val downloadRelevantPullRequestFiles: DownloadRelevantPullRequestFiles,
+    private val pullRequestFileFetcher: PullRequestFileFetcher,
     private val runKtLintOnDirectory: RunKtLintOnDirectory,
     private val parseKtLintReport: ParseKtLintReport,
-    private val parseGitPatchIntoLines: ParseGitPatchIntoLines,
     private val createCommentsFromKtLintErrors: CreateCommentsFromKtLintErrors,
     private val createAPullRequestReview: CreateAPullRequestReview
 ) {
 
     fun review(pullRequestNumber: Int) {
-        when (val prValue = getPullRequestDetails(pullRequestNumber)) {
-            is Value.Data<*> -> downloadFiles(prValue.data as PullRequest)
+
+
+        when (val prValue = pullRequestFileFetcher.fetch(pullRequestNumber)) {
+            is Value.Data<*> -> {
+                val pullRequest = prValue.data as PullRequest
+                runKtLintReport(pullRequest)
+            }
             is Value.Error -> println(prValue.message)
         }
     }
 
 
-    private fun downloadFiles(pullRequest: PullRequest) {
-        when (val files = getPullRequestFiles(pullRequest)) {
-            is Value.Data<*> -> downloadRelevantFiles(pullRequest, files.data as List<PullRequestFile>)
-            is Value.Error -> println(files.message)
-        }
-    }
-
-    private fun downloadRelevantFiles(pullRequest: PullRequest, files: List<PullRequestFile>) {
-        downloadRelevantPullRequestFiles(pullRequest.head.ref, config.fileLocation + pullRequest.number + "/", files)
-        runKtLintReport(pullRequest, files)
-    }
-
-    private fun runKtLintReport(pullRequest: PullRequest, files: List<PullRequestFile>) {
+    private fun runKtLintReport(pullRequest: PullRequest) {
         val reportLocation = runKtLintOnDirectory(pullRequest, config.fileLocation, config.reportLocation)
         val report = parseKtLintReport.invoke(reportLocation)
-        createGithubReview(pullRequest, report, files)
+        createGithubReview(pullRequest, report)
     }
 
 
-    private fun createGithubReview(pullRequest: PullRequest, report: KtLintReport, files: List<PullRequestFile>) {
-        val patchesByFile = files.map { kotlinFile ->
-            kotlinFile.patch.split("@@ -").filterNot { s -> s.isEmpty() }.map {
-                parseGitPatchIntoLines.invoke(kotlinFile.filename, kotlinFile.sha, it)
-            }
-        }.flatten()
-        val suggestedChanges = createCommentsFromKtLintErrors(report, patchesByFile)
+    private fun createGithubReview(pullRequest: PullRequest, report: KtLintReport) {
+        val suggestedChanges =
+            createCommentsFromKtLintErrors(report, pullRequest.files.map { it.fetchedFile.patches }.flatten())
 
         val review = if (suggestedChanges.isEmpty()) {
             PostAReview(
@@ -88,12 +74,13 @@ class PullRequestReviewer(
 
             return PullRequestReviewer(
                 config,
-                GetPullRequestDetails(gitHubService),
-                GetPullRequestFiles(gitHubService),
-                DownloadRelevantPullRequestFiles(gitHubService),
+                GithubPullRequestFileFetcher(
+                    GetPullRequestDetails(gitHubService),
+                    GetGithubPullRequestFiles(gitHubService, ParseGitPatchIntoLines(GetPatchMetaData())),
+                    DownloadRelevantPullRequestFiles(gitHubService)
+                ),
                 RunKtLintOnDirectory(),
                 ParseKtLintReport(gson),
-                ParseGitPatchIntoLines(GetPatchMetaData()),
                 CreateCommentsFromKtLintErrors(),
                 CreateAPullRequestReview(gitHubService)
             )

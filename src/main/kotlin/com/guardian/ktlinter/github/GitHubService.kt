@@ -1,6 +1,8 @@
 package com.guardian.ktlinter.github
 
 import com.google.gson.Gson
+import com.guardian.ktlinter.github.models.GithubPullRequest
+import com.guardian.ktlinter.github.models.GithubPullRequestFile
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -14,12 +16,12 @@ interface GitHubService {
     @GET("repos/guardian/android-news-app/pulls/{pull_number}/files")
     fun getPullRequestFiles(
         @Path("pull_number") pullRequestNumber: Int
-    ): Call<List<PullRequestFile>>
+    ): Call<List<GithubPullRequestFile>>
 
     @GET("repos/guardian/android-news-app/pulls/{pull_number}")
     fun getPullRequestDetails(
         @Path("pull_number") pullRequestNumber: Int
-    ): Call<PullRequest>
+    ): Call<GithubPullRequest>
 
     @GET("repos/guardian/android-news-app/contents/{path}")
     @Headers("Content-Type: application/json")
