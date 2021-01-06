@@ -1,5 +1,6 @@
 package com.guardian.ktlinter
 
+import com.guardian.ktlinter.models.Value
 import retrofit2.Call
 
 fun <T> executeCall(call: Call<T>): Value {

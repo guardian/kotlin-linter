@@ -14,6 +14,8 @@ import com.guardian.ktlinter.ktlint.KtLintReportCreator
 import com.guardian.ktlinter.ktlint.ParseKtLintReport
 import com.guardian.ktlinter.ktlint.RunKtLintOnDirectory
 import com.guardian.ktlinter.models.PullRequest
+import com.guardian.ktlinter.models.Value
+import com.guardian.ktlinter.pullrequests.PullRequestFileFetcher
 import com.guardian.ktlinter.reports.ReportCreator
 import com.guardian.ktlinter.reports.models.Report
 import com.guardian.ktlinter.reports.models.SuggestedChange

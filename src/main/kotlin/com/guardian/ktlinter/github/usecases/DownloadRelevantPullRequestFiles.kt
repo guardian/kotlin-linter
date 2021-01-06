@@ -1,6 +1,6 @@
 package com.guardian.ktlinter.github.usecases
 
-import com.guardian.ktlinter.Value
+import com.guardian.ktlinter.models.Value
 import com.guardian.ktlinter.executeCall
 import com.guardian.ktlinter.github.network.GitHubService
 import com.guardian.ktlinter.models.DownloadedFile
