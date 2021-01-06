@@ -1,7 +1,8 @@
 package com.guardian.ktlinter.git
 
-import com.guardian.ktlinter.Patch
-import com.guardian.ktlinter.PatchLine
+import com.guardian.ktlinter.models.Patch
+import com.guardian.ktlinter.models.PatchLine
+
 
 class ParseGitPatchIntoLines(
     private val getPatchMetaData: GetPatchMetaData

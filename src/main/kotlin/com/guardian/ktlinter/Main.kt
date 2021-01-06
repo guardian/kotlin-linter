@@ -2,9 +2,7 @@ package com.guardian.ktlinter
 
 
 fun main() {
-    val pullRequestReviewer = PullRequestReviewer.create(
-        PullRequestReviewer.Config("tmp/", "reports/")
-    )
+    val pullRequestReviewer = PullRequestReviewer.create()
     pullRequestReviewer.review(6445)
 }
 

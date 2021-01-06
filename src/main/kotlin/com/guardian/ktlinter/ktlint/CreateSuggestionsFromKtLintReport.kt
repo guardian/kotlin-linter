@@ -1,10 +1,10 @@
-package com.guardian.ktlinter.github
+package com.guardian.ktlinter.ktlint
 
-import com.guardian.ktlinter.Patch
-import com.guardian.ktlinter.ktlint.KtLintError
-import com.guardian.ktlinter.ktlint.KtLintReport
+import com.guardian.ktlinter.ktlint.models.KtLintReport
+import com.guardian.ktlinter.models.Patch
+import com.guardian.ktlinter.reports.models.SuggestedChange
 
-class CreateCommentsFromKtLintErrors {
+class CreateSuggestionsFromKtLintReport {
 
     operator fun invoke(ktLintFileReport: KtLintReport, patches: List<Patch>): List<SuggestedChange> {
         return ktLintFileReport.fileReports.map { fileReport ->
@@ -31,11 +31,3 @@ class CreateCommentsFromKtLintErrors {
         }.flatten()
     }
 }
-
-
-data class SuggestedChange(
-    val file: String,
-    val commit: String,
-    val line: Int,
-    val ktLintError: KtLintError
-)

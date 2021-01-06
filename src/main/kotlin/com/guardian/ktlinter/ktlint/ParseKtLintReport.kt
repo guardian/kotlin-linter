@@ -3,6 +3,8 @@ package com.guardian.ktlinter.ktlint
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
+import com.guardian.ktlinter.ktlint.models.KtLintFileReport
+import com.guardian.ktlinter.ktlint.models.KtLintReport
 import java.io.FileReader
 
 class ParseKtLintReport(

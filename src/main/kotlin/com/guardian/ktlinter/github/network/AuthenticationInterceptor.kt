@@ -1,4 +1,4 @@
-package com.guardian.ktlinter.github
+package com.guardian.ktlinter.github.network
 
 import okhttp3.Interceptor
 import okhttp3.Request

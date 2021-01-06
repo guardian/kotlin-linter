@@ -1,6 +1,6 @@
 package com.guardian.ktlinter.ktlint
 
-import com.guardian.ktlinter.PullRequest
+import com.guardian.ktlinter.models.PullRequest
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -28,5 +28,4 @@ class RunKtLintOnDirectory {
             .start()
             .waitFor(60, TimeUnit.MINUTES)
     }
-
 }

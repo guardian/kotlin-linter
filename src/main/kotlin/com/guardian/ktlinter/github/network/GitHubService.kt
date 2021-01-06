@@ -1,6 +1,8 @@
-package com.guardian.ktlinter.github
+package com.guardian.ktlinter.github.network
 
 import com.google.gson.Gson
+import com.guardian.ktlinter.github.models.GithubReview
+import com.guardian.ktlinter.github.models.GithubPullRequestReviewResponse
 import com.guardian.ktlinter.github.models.GithubPullRequest
 import com.guardian.ktlinter.github.models.GithubPullRequestFile
 import okhttp3.Credentials
@@ -32,8 +34,8 @@ interface GitHubService {
     @Headers("Accept: application/vnd.github.v3+json")
     fun postAReview(
         @Path("pull_number") pullNumber: Int,
-        @Body postAReview: PostAReview
-    ): Call<PullRequestReview>
+        @Body githubReview: GithubReview
+    ): Call<GithubPullRequestReviewResponse>
 
     companion object {
 
