@@ -1,0 +1,5 @@
+site_name: Kotlin PR Linter
+theme:
+  name: material
+  features:
+    - navigation.tabs
