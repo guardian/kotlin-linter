@@ -1,4 +1,6 @@
 site_name: Kotlin PR Linter
+remote_branch: gh-pages
+
 theme:
   name: material
   features:

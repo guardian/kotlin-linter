@@ -7,5 +7,3 @@ fun main(args: Array<String>) {
     val pullRequestReviewer = PullRequestLinter.create()
     pullRequestReviewer.review(pullRequestId)
 }
-
-
