@@ -5,7 +5,6 @@ import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequest
 import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequestFile
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -17,21 +16,21 @@ import retrofit2.http.Query
 internal interface GitHubRepositoryService {
 
     @GET("pulls/{pull_number}/files")
-    fun getPullRequestFiles(
+    suspend fun getPullRequestFiles(
         @Path("pull_number") pullRequestNumber: Int
-    ): Call<List<GithubPullRequestFile>>
+    ): List<GithubPullRequestFile>
 
     @GET("pulls/{pull_number}")
-    fun getPullRequestDetails(
+    suspend fun getPullRequestDetails(
         @Path("pull_number") pullRequestNumber: Int
-    ): Call<GithubPullRequest>
+    ): GithubPullRequest
 
     @GET("contents/{path}")
     @Headers("Content-Type: application/json")
-    fun getFileContents(
+    suspend fun getFileContents(
         @Path("path") path: String,
         @Query("ref") ref: String
-    ): Call<String>
+    ): String
 
     companion object {
 
