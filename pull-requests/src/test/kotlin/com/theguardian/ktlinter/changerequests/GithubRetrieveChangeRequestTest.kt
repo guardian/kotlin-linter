@@ -1,7 +1,6 @@
 package com.theguardian.ktlinter.changerequests
 
 import com.google.gson.Gson
-import com.theguardian.ktlinter.changerequests.github.GetPatchMetaData
 import com.theguardian.ktlinter.changerequests.github.GitHubRepositoryService
 import com.theguardian.ktlinter.changerequests.github.ParseGitPatchIntoLines
 import kotlinx.coroutines.runBlocking
@@ -73,7 +72,7 @@ internal class GithubRetrieveChangeRequestTest {
             changeRequest.changedFiles[0].rawFileUrl
         )
     }
-    
+
     @AfterEach
     fun tearDown() {
         mockWebServer.shutdown()
@@ -88,9 +87,7 @@ internal class GithubRetrieveChangeRequestTest {
         )
 
         return GithubRetrieveChangeRequest(
-            githubRepositoryService, ParseGitPatchIntoLines(
-                GetPatchMetaData()
-            )
+            githubRepositoryService, ParseGitPatchIntoLines()
         )
     }
 

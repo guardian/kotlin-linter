@@ -6,6 +6,13 @@ import com.theguardian.ktlinter.changerequests.github.GitHubRepositoryService
 import com.theguardian.ktlinter.changerequests.github.ParseGitPatchIntoLines
 import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequestFile
 
+/**
+ * An implementation of [RetrieveChangeRequest] that uses the Github Rest API to retrieve a pull requests details and
+ * associated files.
+ *
+ * @param gitHubRepositoryService a retrofit service responsible for handling pull request related information
+ * @param parseGitPatchIntoLines an interactor responsible for parsing a patch
+ */
 internal class GithubRetrieveChangeRequest(
     private val gitHubRepositoryService: GitHubRepositoryService,
     private val parseGitPatchIntoLines: ParseGitPatchIntoLines

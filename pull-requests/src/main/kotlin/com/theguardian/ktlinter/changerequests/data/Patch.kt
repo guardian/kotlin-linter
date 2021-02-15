@@ -17,7 +17,10 @@ data class Patch(
 
     sealed class Line {
         object NoChange : Line()
-        object Removal : Line()
+        data class Removal(
+            val change: String
+        ) : Line()
+
         object Metadata : Line()
         data class Addition(
             val lineInFile: Int,

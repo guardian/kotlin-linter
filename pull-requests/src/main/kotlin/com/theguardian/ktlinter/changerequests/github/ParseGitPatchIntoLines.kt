@@ -2,13 +2,18 @@ package com.theguardian.ktlinter.changerequests.github
 
 import com.theguardian.ktlinter.changerequests.data.Patch
 
+/**
+ * Converts a Git patch into an interactable [Patch] class.
+ */
+class ParseGitPatchIntoLines {
 
-class ParseGitPatchIntoLines(
-    private val getPatchMetaData: GetPatchMetaData
-) {
-
-    operator fun invoke(filename: String, sha: String, patch: String): Patch {
-        val linesInPatchAfterMeta = patch
+    /**
+     * @param filename associated with the patch string
+     * @param sha the commit sha associated with the patch string
+     * @param patchString the [String] to translate to a [Patch]
+     */
+    operator fun invoke(filename: String, sha: String, patchString: String): Patch {
+        val linesInPatchAfterMeta = patchString
             .split("@@ -")
             .filterNot { s -> s.isEmpty() }
 
@@ -17,28 +22,24 @@ class ParseGitPatchIntoLines(
 
             val patchMetaData = getPatchMetaData(patch)
 
-            val linesWithoutPatchInfo = linesInPatch.filterIndexed { i, s -> i > 0 }
+            val linesWithoutPatchInfo = linesInPatch.filterIndexed { i, _ -> i > 0 }
             var lineCount = 0
             val lineBeforeStartOfChanges = patchMetaData.patchStartLine - 1
-            linesWithoutPatchInfo.mapIndexed { position, patchLine ->
+            linesWithoutPatchInfo.map { patchLine ->
                 when {
-                    patchLine.startsWith("+") -> {
+                    patchLine.startsWith("+") -> Patch.Line.Addition(
+                        lineInFile = lineBeforeStartOfChanges + lineCount,
+                        lineInPatch = lineCount,
+                        change = patchLine
+                    ).also {
                         lineCount++
-                        Patch.Line.Addition(
-                            lineInFile = lineBeforeStartOfChanges + lineCount,
-                            lineInPatch = lineCount,
-                            change = patchLine
-                        )
                     }
-                    patchLine.startsWith("-") -> {
-                        Patch.Line.Removal
-                    }
-                    patchLine.startsWith("@@") -> {
-                        Patch.Line.Metadata
-                    }
-                    else -> {
+                    patchLine.startsWith("-") -> Patch.Line.Removal(
+                        change = patchLine
+                    )
+                    patchLine.startsWith("@@") -> Patch.Line.Metadata
+                    else -> Patch.Line.NoChange.also {
                         lineCount++
-                        Patch.Line.NoChange
                     }
                 }
             }
@@ -46,6 +47,22 @@ class ParseGitPatchIntoLines(
 
         return Patch(
             filename, sha, stringLinesMappedToPatchLines
+        )
+    }
+
+    private fun getPatchMetaData(patch: String): PatchMetaData {
+        val patchModifiedData = patch
+            .split("@@")
+            .map { s -> s.trim() }
+            .filterNot { s -> s.isEmpty() }
+            .first()
+            .split("+")
+            .last()
+            .split(",")
+//        assert(patchModifiedData.size == 2) { "The size of the modified data is incorrect." }
+        return PatchMetaData(
+            patchStartLine = patchModifiedData.first().toInt(),
+            patchLength = patchModifiedData.last().toInt()
         )
     }
 }
