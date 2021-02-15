@@ -13,7 +13,7 @@ internal class GithubRetrieveChangeRequest(
 
     override suspend fun retrieve(changeRequestId: String): ChangeRequest {
         val pullRequestDetails = gitHubRepositoryService.getPullRequestDetails(changeRequestId.toInt())
-        val pullRequestFiles = gitHubRepositoryService.getPullRequestFiles(pullRequestDetails.number)
+        val pullRequestFiles = gitHubRepositoryService.getPullRequestFiles(changeRequestId.toInt())
         return ChangeRequest(
             pullRequestDetails.number,
             head = ChangeRequest.Commit(pullRequestDetails.head.sha),
