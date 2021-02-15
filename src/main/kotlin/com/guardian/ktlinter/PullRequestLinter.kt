@@ -38,7 +38,7 @@ class PullRequestLinter(
         fun create(): PullRequestLinter {
             val gson = GsonBuilder().setLenient().create()
             val gitHubService =
-                GitHubService.create(LinterCredentials.GITHUB_USERNAME, LinterCredentials.GITHUB_TOKEN, gson)
+                GitHubService.create("", "", gson)
 
             return PullRequestLinter(
                 GithubPullRequestFileFetcher(
