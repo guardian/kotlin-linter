@@ -1,13 +1,12 @@
 package com.theguardian.ktlinter.changerequests.github
 
-import com.google.gson.Gson
 import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequest
 import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequestFile
 import okhttp3.Credentials
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -39,7 +38,7 @@ internal interface GitHubRepositoryService {
             githubToken: String,
             user: String,
             project: String,
-            gson: Gson
+            baseUrl: HttpUrl = HttpUrl.parse("https://api.github.com/repos/")!!
         ): GitHubRepositoryService {
             val okHttpClient =
                 OkHttpClient.Builder()
@@ -57,10 +56,9 @@ internal interface GitHubRepositoryService {
                     }
                     .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.github.com/repos/$user/$project/")
+                .baseUrl("$baseUrl$user/$project/")
                 .client(okHttpClient)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(MoshiConverterFactory.create())
                 .build()
 
             return retrofit.create(GitHubRepositoryService::class.java)

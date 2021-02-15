@@ -1,9 +1,10 @@
 package com.theguardian.ktlinter.changerequests.github
 
 import com.theguardian.ktlinter.changerequests.data.Patch
+import com.theguardian.ktlinter.changerequests.data.PatchMetaData
 
 /**
- * Converts a Git patch into an interactable [Patch] class.
+ * Converts a Git patch into a [Patch].
  */
 class ParseGitPatchIntoLines {
 
@@ -59,7 +60,7 @@ class ParseGitPatchIntoLines {
             .split("+")
             .last()
             .split(",")
-//        assert(patchModifiedData.size == 2) { "The size of the modified data is incorrect." }
+        assert(patchModifiedData.size == 2) { "The size of the modified data is incorrect." }
         return PatchMetaData(
             patchStartLine = patchModifiedData.first().toInt(),
             patchLength = patchModifiedData.last().toInt()

@@ -1,10 +1,8 @@
 package com.theguardian.ktlinter.changerequests
 
-import com.google.gson.Gson
 import com.theguardian.ktlinter.changerequests.github.GitHubRepositoryService
 import com.theguardian.ktlinter.changerequests.github.ParseGitPatchIntoLines
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -16,9 +14,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 
 internal class GithubRetrieveChangeRequestTest {
@@ -31,13 +26,14 @@ internal class GithubRetrieveChangeRequestTest {
     fun setUp() {
         mockWebServer = MockWebServer()
         mockWebServer.start()
-        githubRepositoryService = Retrofit.Builder()
-            .baseUrl(mockWebServer.url("/"))
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create(Gson()))
-            .client(OkHttpClient())
-            .build()
-            .create(GitHubRepositoryService::class.java)
+        githubRepositoryService = GitHubRepositoryService
+            .create(
+                "githubUsername",
+                "password",
+                "guardian",
+                "kotlin-linter",
+                mockWebServer.url("/")
+            )
     }
 
     @Test

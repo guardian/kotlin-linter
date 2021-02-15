@@ -2,16 +2,9 @@ package com.theguardian.ktlinter.changerequests.github
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ParseGitPatchIntoLinesTest {
-
-
-    @BeforeEach
-    fun setUp() {
-
-    }
 
     @Test
     fun `Verify a simple patch has the correct additions and deletions`() {
