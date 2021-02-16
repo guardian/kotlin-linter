@@ -1,7 +1,10 @@
-package com.theguardian.ktlinter.changerequests.github
+package com.theguardian.remoterepository
 
-import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequest
-import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequestFile
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.theguardian.remoterepository.data.ChangeRequestDetails
+import com.theguardian.remoterepository.data.GithubPullRequestFile
+import com.theguardian.remoterepository.data.adapters.GithubPullRequestToChangeRequestDetails
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -22,7 +25,7 @@ internal interface GitHubRepositoryService {
     @GET("pulls/{pull_number}")
     suspend fun getPullRequestDetails(
         @Path("pull_number") pullRequestNumber: Int
-    ): GithubPullRequest
+    ): ChangeRequestDetails
 
     @GET("contents/{path}")
     @Headers("Content-Type: application/json")
@@ -40,6 +43,10 @@ internal interface GitHubRepositoryService {
             project: String,
             baseUrl: HttpUrl = HttpUrl.parse("https://api.github.com/repos/")!!
         ): GitHubRepositoryService {
+            val moshi = Moshi.Builder()
+                .add(GithubPullRequestToChangeRequestDetails())
+                .addLast(KotlinJsonAdapterFactory())
+                .build()
             val okHttpClient =
                 OkHttpClient.Builder()
                     .addInterceptor(
@@ -58,7 +65,7 @@ internal interface GitHubRepositoryService {
             val retrofit = Retrofit.Builder()
                 .baseUrl("$baseUrl$user/$project/")
                 .client(okHttpClient)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
 
             return retrofit.create(GitHubRepositoryService::class.java)

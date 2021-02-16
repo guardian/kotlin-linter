@@ -1,4 +1,4 @@
-package com.theguardian.ktlinter.changerequests.github
+package com.theguardian.ktlinter.changerequests
 
 import com.theguardian.ktlinter.changerequests.data.Patch
 import com.theguardian.ktlinter.changerequests.data.PatchMetaData

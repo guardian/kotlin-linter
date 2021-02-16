@@ -1,4 +1,4 @@
-package com.theguardian.ktlinter.changerequests.github
+package com.theguardian.ktlinter.changerequests
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
