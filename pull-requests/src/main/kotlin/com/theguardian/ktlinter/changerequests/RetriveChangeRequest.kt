@@ -2,25 +2,23 @@ package com.theguardian.ktlinter.changerequests
 
 import com.theguardian.ktlinter.changerequests.data.ChangeRequest
 import com.theguardian.ktlinter.changerequests.data.ChangedFile
-import com.theguardian.ktlinter.changerequests.github.GitHubRepositoryService
-import com.theguardian.ktlinter.changerequests.github.ParseGitPatchIntoLines
-import com.theguardian.ktlinter.changerequests.github.data.GithubPullRequestFile
+import com.theguardian.remoterepository.RemoteRepository
 
 /**
  * An implementation of [RetrieveChangeRequest] that uses the Github Rest API to retrieve a pull requests details and
  * associated files.
  *
- * @param gitHubRepositoryService a retrofit service responsible for handling pull request related information
+ * @param githubRemoteRepository a remote repositoryy
  * @param parseGitPatchIntoLines an interactor responsible for parsing a patch
  */
-internal class GithubRetrieveChangeRequest(
-    private val gitHubRepositoryService: GitHubRepositoryService,
+internal class RetriveChangeRequest(
+    private val githubRemoteRepository: RemoteRepository,
     private val parseGitPatchIntoLines: ParseGitPatchIntoLines
 ) : RetrieveChangeRequest {
 
     override suspend fun retrieve(changeRequestId: String): ChangeRequest {
-        val pullRequestDetails = gitHubRepositoryService.getPullRequestDetails(changeRequestId.toInt())
-        val pullRequestFiles = gitHubRepositoryService.getPullRequestFiles(changeRequestId.toInt())
+        val pullRequestDetails = githubRemoteRepository.getChangeRequestDetails(changeRequestId.toInt())
+        val pullRequestFiles = githubRemoteRepository.getChangeRequestFiles(changeRequestId.toInt())
         return ChangeRequest(
             pullRequestDetails.number,
             head = ChangeRequest.Commit(pullRequestDetails.head.sha),

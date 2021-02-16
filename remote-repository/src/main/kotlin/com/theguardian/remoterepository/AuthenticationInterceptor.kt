@@ -1,4 +1,4 @@
-package com.theguardian.ktlinter.changerequests.github
+package com.theguardian.remoterepository
 
 import okhttp3.Interceptor
 import okhttp3.Request

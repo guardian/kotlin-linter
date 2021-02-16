@@ -1,4 +1,4 @@
-package com.theguardian.ktlinter.changerequests.github.data
+package com.theguardian.remoterepository.data
 
 internal data class GithubPullRequestFile(
     val sha: String,

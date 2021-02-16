@@ -1,4 +1,4 @@
-package com.theguardian.ktlinter.changerequests.github.data
+package com.theguardian.remoterepository.data
 
 internal class GithubCommit(
     val ref: String,
